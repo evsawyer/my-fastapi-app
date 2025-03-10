@@ -29,8 +29,10 @@ async def handle_reaction(request: Request):
             event = payload["event"]
             if event.get("type") == "message":
                 return JSONResponse(content={"status": "message received"}, status_code=200)
+                print("message received")
             if event.get("type") == "reaction_added":
                 return JSONResponse(content={"status": "reaction added"}, status_code=200)
+                print("reaction added")
 
         return JSONResponse(content={"status": "event ignored"}, status_code=200)
 
