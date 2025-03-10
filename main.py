@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
+from starlette.responses import JSONResponse 
 from pydantic import BaseModel
 import os
 
@@ -11,15 +12,6 @@ SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 # Define the specific channel ID to respond to
 TARGET_CHANNEL_ID = "C08GBSCSEG3"
 
-# Define a Pydantic model for the Slack event
-class SlackEvent(BaseModel):
-    type: str
-    user: str
-    reaction: str
-    item: dict
-    item_user: str
-    event_ts: str
-
 # Initialize FastAPI app
 app = FastAPI()
 
@@ -27,15 +19,30 @@ app = FastAPI()
 @app.post("/slack/reaction")
 async def handle_reaction(request: Request):
     try:
-        # Parse the incoming request
-        body = await request.json()
+        payload = await request.json()
+        event_type = payload.get("type")
 
-        # Check if it's a challenge request
-        if "challenge" in body:
-            return {"challenge": body["challenge"]}
+        if event_type == "url_verification":
+            return JSONResponse(content={"challenge": payload.get("challenge")})
+
+        if "event" in payload:
+            event = payload["event"]
+            if event.get("type") == "message":
+                return JSONResponse(content={"status": "message received"}, status_code=200)
+            if event.get("type") == "reaction_added":
+                return JSONResponse(content={"status": "reaction added"}, status_code=200)
+
+        return JSONResponse(content={"status": "event ignored"}, status_code=200)
+
+        # Parse the incoming request
+        # body = await request.json()
+
+        # # Check if it's a challenge request
+        # if "challenge" in body:
+        #     return {"challenge": body["challenge"]}
         
 
-        print(body["event"]["type"])
+        # print(body["event"]["type"])
         # return(body["event"]["type"])
 
         # Extract the event data
