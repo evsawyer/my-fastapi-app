@@ -7,15 +7,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Access the environment variables
-SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
-#need to check that this is available when deployed
-#add a conditional to check if this varibale is set
-if not SLACK_SIGNING_SECRET:
-    raise ValueError("SLACK_SIGNING_SECRET is not set")
-else:
-    # also add a print statement to print the last 4 digits of the secret
-    print(f"SLACK_SIGNING_SECRET: {SLACK_SIGNING_SECRET[-4:]}")
+
 
 # Get the Slack bot token from environment variables
 # SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
@@ -29,6 +21,16 @@ app = FastAPI()
 # Create POST endpoint to handle reaction events
 @app.post("/slack/reaction")
 async def handle_reaction(request: Request):
+    # Access the environment variables
+    SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
+    #need to check that this is available when deployed
+    #add a conditional to check if this varibale is set
+    if not SLACK_SIGNING_SECRET:
+        raise ValueError("SLACK_SIGNING_SECRET is not set")
+    else:
+        # also add a print statement to print the last 4 digits of the secret
+        print(f"SLACK_SIGNING_SECRET: {SLACK_SIGNING_SECRET[-4:]}")
+        
     try:
         payload = await request.json()
         event_type = payload.get("type")
