@@ -2,12 +2,16 @@ from fastapi import FastAPI, HTTPException, Request
 from starlette.responses import JSONResponse 
 from pydantic import BaseModel
 import os
+from dotenv import load_dotenv
 
-# HI
-# Hi
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the environment variables
+SLACK_SIGNING_SECRET = os.getenv("SLACK_SIGNING_SECRET")
 
 # Get the Slack bot token from environment variables
-SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
+# SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 
 # Define the specific channel ID to respond to
 TARGET_CHANNEL_ID = "C08GBSCSEG3"
